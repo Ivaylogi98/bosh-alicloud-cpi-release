@@ -15,7 +15,7 @@ import (
 // longer than the generic WaitForDiskStatus timeout (600s). Give the spec-change
 // wait its own budget, matching the 30 min the Ruby bootstrap-bosh migration uses.
 const (
-	modifyDiskSpecWaitTimeout  = 30 * time.Minute
+	modifyDiskSpecWaitTimeout  = 60 * time.Minute
 	modifyDiskSpecWaitInterval = 10 * time.Second
 )
 
