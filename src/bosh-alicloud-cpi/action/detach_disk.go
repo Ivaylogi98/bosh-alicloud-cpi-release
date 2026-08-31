@@ -38,6 +38,8 @@ func (a DetachDiskMethod) DetachDisk(vmCID apiv1.VMCID, diskCID apiv1.DiskCID) e
 			return true, nil
 		case alicloud.DiskStatusDetaching:
 			return false, nil
+		case alicloud.DiskStatusModifying:
+			return false, nil
 		default:
 			return false, fmt.Errorf("unexpect disk %s status %s", diskCid, disk.Status)
 		}
