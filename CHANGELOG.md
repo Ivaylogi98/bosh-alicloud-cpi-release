@@ -1,7 +1,18 @@
 # Change Log
 
 All releases of the BOSH CPI for Alibaba Cloud will be documented in this file.
-## 62.0.0 (Unreleased)
+## 63.0.0 (Unreleased)
+
+## 62.0.0 (September 03, 2026)
+
+FEATURES:
+
+- Support ECS private pools (`PrivatePoolOptions`) when creating an instance ([#231](https://github.com/cloudfoundry/bosh-alicloud-cpi-release/pull/231))
+  - `cloud_properties.private_pool_options.match_criteria` accepts `Open`, `Target`, or `None`
+  - `cloud_properties.private_pool_options.id` names an elasticity assurance (`eap-*`) or capacity reservation (`crp-*`) pool
+  - `Target` requires an id; `Open` and `None` reject one
+  - The CPI validates the options before calling ECS, so invalid combinations surface as readable errors instead of ECS `UnknownError`
+  - The create retry policy does not retry private pool rejections (`Invalid.PrivatePoolOptions.Id`, `MissingParameter.PrivatePoolOptionsId`, `Invalid.PrivatePoolOptionsId`, `SpotNotSupported`, `OperationDenied.NoStock`)
 
 ## 61.0.0 (August 20, 2026)
 
