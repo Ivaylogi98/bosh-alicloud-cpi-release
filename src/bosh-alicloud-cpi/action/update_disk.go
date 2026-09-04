@@ -13,7 +13,7 @@ import (
 
 // ModifyDiskSpec is asynchronous and can run for many minutes on large disks —
 // longer than the generic WaitForDiskStatus timeout (600s). Give the spec-change
-// wait its own budget, matching the 30 min the Ruby bootstrap-bosh migration uses.
+// wait its own budget, matching the 60 min the Ruby bootstrap-bosh migration uses.
 const (
 	modifyDiskSpecWaitTimeout      = 60 * time.Minute // post-ModifyDiskSpec wait
 	modifyDiskSpecEntryWaitTimeout = 10 * time.Minute // entry-guard: wait for a prior conversion to settle
