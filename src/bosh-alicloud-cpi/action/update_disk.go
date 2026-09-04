@@ -15,8 +15,9 @@ import (
 // longer than the generic WaitForDiskStatus timeout (600s). Give the spec-change
 // wait its own budget, matching the 30 min the Ruby bootstrap-bosh migration uses.
 const (
-	modifyDiskSpecWaitTimeout  = 60 * time.Minute
-	modifyDiskSpecWaitInterval = 10 * time.Second
+	modifyDiskSpecWaitTimeout      = 60 * time.Minute // post-ModifyDiskSpec wait
+	modifyDiskSpecEntryWaitTimeout = 10 * time.Minute // entry-guard: wait for a prior conversion to settle
+	modifyDiskSpecWaitInterval     = 10 * time.Second
 )
 
 type UpdateDiskMethod struct {
@@ -44,7 +45,7 @@ func (a UpdateDiskMethod) UpdateDisk(diskCID apiv1.DiskCID, newSize int, cloudPr
 	// to settle to Available before reading category/PL, so we don't re-issue
 	// ModifyDiskSpec on a disk that is mid-conversion.
 	if alicloud.DiskStatus(disk.Status) != alicloud.DiskStatusAvailable {
-		if _, err := a.disks.WaitForDiskStatus(diskCid, alicloud.DiskStatusAvailable, modifyDiskSpecWaitTimeout, modifyDiskSpecWaitInterval); err != nil {
+		if _, err := a.disks.WaitForDiskStatus(diskCid, alicloud.DiskStatusAvailable, modifyDiskSpecEntryWaitTimeout, modifyDiskSpecWaitInterval); err != nil {
 			return diskCID, bosherr.WrapErrorf(err, "UpdateDisk disk %s not Available on entry", diskCid)
 		}
 		disk, err = a.disks.GetDisk(diskCid)

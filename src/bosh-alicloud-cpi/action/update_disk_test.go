@@ -234,6 +234,24 @@ var _ = Describe("cpi:update_disk", func() {
 			Expect(opts[1]).To(Equal(10 * time.Second))
 		})
 
+		It("passes 10m timeout and 10s interval to entry-wait WaitForDiskStatus", func() {
+			cid, disk := mockContext.NewDisk("")
+			disk.Category = string(alicloud.DiskCategoryCloudESSD)
+			// Non-Available status triggers the entry-guard. WaitForDiskStatus will
+			// fail (mock checks status synchronously), but opts are recorded before
+			// the check so we can assert the constants regardless.
+			disk.Status = string(alicloud.DiskStatusCreating)
+
+			_, _ = caller.CallGenericAPIVersion("update_disk", 2, cid, disk.Size*1024, map[string]interface{}{
+				"category": string(alicloud.DiskCategoryCloudESSD),
+			})
+
+			opts := *mockContext.WaitForDiskStatusOpts
+			Expect(opts).To(HaveLen(2))
+			Expect(opts[0]).To(Equal(10 * time.Minute))
+			Expect(opts[1]).To(Equal(10 * time.Second))
+		})
+
 		It("returns an error when the disk does not exist", func() {
 			_, err := caller.CallGenericAPIVersion("update_disk", 2, "non-existent-disk", 20480, map[string]interface{}{
 				"category": string(alicloud.DiskCategoryCloudESSD),
